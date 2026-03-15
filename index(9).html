@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResmiYaz — Resmi Dilekçe, İhtar & Yazı Üreticisi</title>
+<meta name="description" content="Avukata gitmeden önce 60 saniye ver. Resmi dilekçe, ihtar, itiraz ve şikayet mektubu — yasal dayanaklı, 60 saniyede hazır.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{--bg:#fafaf8;--bg2:#fff;--bg3:#f3f2ee;--border:#e4e3dc;--border2:#d0cfc6;--text:#181816;--text2:#68685e;--text3:#a8a89e;--accent:#1a4a8a;--accent2:#143a6e;--al:#e8f0fa;--al2:#d0e2f5;--red:#c0392b;--green:#1a6a3a;--amber:#92600a;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(250,250,248,0.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.logo{font-size:18px;font-weight:600;letter-spacing:-.03em;color:var(--text);text-decoration:none;}.logo span{color:var(--accent);}
+.nav-r{display:flex;align-items:center;gap:20px;}.nav-r a{font-size:13px;color:var(--text2);text-decoration:none;transition:color .2s;}.nav-r a:hover{color:var(--text);}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:8px 18px;border-radius:8px;font-weight:500;font-size:13px;}.nav-cta:hover{background:var(--accent2)!important;}
+.hero{padding:140px 40px 80px;max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--al);border:1px solid var(--al2);border-radius:99px;padding:5px 12px;font-size:11px;color:var(--accent);margin-bottom:22px;font-family:'DM Mono',monospace;}
+.hero-tag .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+h1{font-size:clamp(28px,4vw,50px);font-weight:600;letter-spacing:-.04em;line-height:1.08;margin-bottom:18px;}
+h1 em{font-style:normal;color:var(--accent);}
+.hero-sub{font-size:16px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:28px;}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+.btn-p{background:var(--accent);color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-p:hover{background:var(--accent2);transform:translateY(-1px);}
+.btn-s{background:transparent;color:var(--text2);padding:12px 18px;border-radius:10px;font-size:14px;border:1px solid var(--border2);text-decoration:none;transition:all .2s;}
+.btn-s:hover{border-color:var(--text2);color:var(--text);}
+.hero-stats{display:flex;gap:28px;}
+.stat-num{font-size:22px;font-weight:600;letter-spacing:-.03em;color:var(--accent);}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px;}
+.doc-preview{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 32px;box-shadow:0 20px 60px rgba(0,0,0,.06);position:relative;}
+.doc-stamp{position:absolute;top:-12px;right:20px;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:3px 12px;border-radius:99px;}
+.doc-hdr{text-align:center;margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:14px;}
+.doc-hdr-title{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;font-family:'DM Mono',monospace;}
+.doc-hdr-sub{font-size:10px;color:var(--text3);}
+.doc-line{height:7px;background:var(--bg3);border-radius:99px;margin-bottom:5px;}
+.doc-line.s{width:70%;}.doc-line.xs{width:45%;}.doc-line.m{width:85%;}
+.doc-sig{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:var(--text3);}
+.doc-ai{display:flex;align-items:center;gap:5px;margin-top:12px;padding:7px 10px;background:var(--al);border-radius:6px;font-size:10px;color:var(--accent);}
+.showcase{background:var(--bg3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:50px 40px;}
+.showcase-inner{max-width:1060px;margin:0 auto;}
+.showcase h2{font-size:13px;font-weight:500;color:var(--text3);text-align:center;letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px;font-family:'DM Mono',monospace;}
+.type-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.type-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;cursor:pointer;}
+.type-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.tc-icon{font-size:20px;margin-bottom:8px;}
+.tc-name{font-size:13px;font-weight:500;margin-bottom:4px;}
+.tc-desc{font-size:11px;color:var(--text3);line-height:1.4;}
+.section{padding:70px 40px;max-width:1060px;margin:0 auto;}
+.slabel{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-family:'DM Mono',monospace;margin-bottom:12px;display:block;}
+.stitle{font-size:clamp(24px,3.5vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.15;margin-bottom:12px;}
+.ssub{font-size:15px;color:var(--text2);line-height:1.7;font-weight:300;max-width:480px;}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;}
+.feat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.feat-icon{width:34px;height:34px;border-radius:8px;background:var(--al);border:1px solid var(--al2);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px;}
+.feat h3{font-size:14px;font-weight:500;margin-bottom:6px;}
+.feat p{font-size:13px;color:var(--text2);line-height:1.6;}
+.demo-section{background:var(--al);border-top:1px solid var(--al2);border-bottom:1px solid var(--al2);padding:50px 40px;}
+.demo-inner{max-width:760px;margin:0 auto;text-align:center;}
+.demo-doc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:32px 36px;text-align:left;font-family:'DM Mono',monospace;font-size:12px;line-height:2;color:var(--text2);margin-top:24px;box-shadow:0 8px 30px rgba(0,0,0,.06);}
+.demo-doc strong{color:var(--text);}
+.demo-divider{height:1px;background:var(--border);margin:12px 0;}
+#tool{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.tool-wrap{max-width:820px;margin:0 auto;padding:70px 40px;}
+.tool-hdr{text-align:center;margin-bottom:40px;}
+.credits-bar{display:flex;align-items:center;justify-content:space-between;background:var(--al);border:1px solid var(--al2);border-radius:8px;padding:10px 14px;margin-bottom:26px;}
+.credits-l{font-size:12px;color:var(--accent);}.credits-l strong{font-weight:600;}
+.credits-u{font-size:11px;color:var(--accent2);text-decoration:none;font-weight:500;}
+.steps-nav{display:flex;margin-bottom:28px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.step-tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;color:var(--text3);background:var(--bg3);border-right:1px solid var(--border);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.step-tab:last-child{border-right:none;}
+.step-tab.active{background:var(--bg2);color:var(--text);}
+.step-tab .sn{width:18px;height:18px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;flex-shrink:0;}
+.step-tab.active .sn{background:var(--accent);color:#fff;}
+.step-tab.done .sn{background:var(--green);color:#fff;}
+.step-tab.done{color:var(--text2);}
+.form-step{display:none;}.form-step.active{display:block;}
+.doc-type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:26px;}
+.dtype{border:1px solid var(--border2);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.dtype:hover{border-color:var(--accent);background:var(--al);}
+.dtype.selected{border-color:var(--accent);background:var(--al);}
+.dtype-icon{font-size:18px;flex-shrink:0;}
+.dtype h4{font-size:13px;font-weight:500;margin-bottom:2px;}
+.dtype p{font-size:11px;color:var(--text3);line-height:1.4;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.full{grid-column:span 2;}
+.field label{font-size:12px;color:var(--text2);font-weight:500;}
+.field label .req{color:var(--red);}
+.field input,.field textarea,.field select{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;resize:vertical;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,74,138,.08);}
+.field input.err,.field textarea.err{border-color:var(--red);}
+.field textarea{min-height:100px;}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3);}
+.field select{appearance:none;cursor:pointer;}
+.field-hint{font-size:11px;color:var(--text3);}
+.field-err{font-size:11px;color:var(--red);display:none;}
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+.btn-gen{background:var(--accent);color:#fff;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;}
+.btn-gen:hover{background:var(--accent2);}
+.btn-back{background:transparent;color:var(--text2);padding:11px 18px;border-radius:8px;font-size:13px;border:1px solid var(--border2);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.btn-back:hover{border-color:var(--text2);color:var(--text);}
+.loading{text-align:center;padding:50px 0;display:none;}
+.loading-spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading p{font-size:14px;color:var(--text2);}
+.lstep{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:8px;opacity:0;animation:fi .5s ease forwards;}
+@keyframes fi{to{opacity:1;}}
+.error-box{background:#fff5f5;border:1px solid #fcc;border-radius:10px;padding:14px 18px;color:var(--red);font-size:13px;margin-top:16px;display:none;line-height:1.6;}
+.notice-box{background:#fffbf0;border:1px solid #e8d080;border-radius:10px;padding:12px 16px;color:var(--amber);font-size:12px;margin-bottom:14px;line-height:1.6;}
+#output-section{display:none;}
+.output-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.output-title{font-size:13px;font-weight:500;color:var(--text2);}
+.output-doc{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:32px 36px;font-size:13px;line-height:2;color:var(--text);white-space:pre-wrap;max-height:580px;overflow-y:auto;font-family:'DM Mono',monospace;}
+.output-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.btn-copy{background:transparent;color:var(--text2);padding:9px 16px;border-radius:8px;font-size:13px;border:1px solid var(--border2);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.btn-copy:hover{border-color:var(--accent);color:var(--accent);}
+.btn-pdf{background:var(--bg3);color:var(--text);padding:9px 16px;border-radius:8px;font-size:13px;border:1px solid var(--border2);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.btn-pdf:hover{border-color:var(--text2);}
+.btn-new{background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-new:hover{background:var(--accent2);}
+.print-hint{font-size:11px;color:var(--text3);margin-top:8px;font-family:'DM Mono',monospace;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;max-width:560px;}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:26px;}
+.plan.f{border-color:var(--accent);border-width:1.5px;position:relative;}
+.pbadge{position:absolute;top:-10px;left:20px;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;text-transform:uppercase;}
+.pname{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-family:'DM Mono',monospace;}
+.pprice{font-size:32px;font-weight:600;letter-spacing:-.04em;margin-bottom:2px;}
+.pprice span{font-size:14px;font-weight:400;color:var(--text2);}
+.pdesc{font-size:11px;color:var(--text3);margin-bottom:18px;}
+.pfeats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.pfeats li{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:7px;}
+.pfeats li::before{content:'✓';font-size:11px;color:var(--green);}
+.pbtn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text);text-align:center;display:block;text-decoration:none;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.plan.f .pbtn{background:var(--accent);color:#fff;border-color:var(--accent);}
+.faq{margin-top:40px;max-width:560px;}
+.fi{border-bottom:1px solid var(--border);padding:16px 0;cursor:pointer;}
+.fi:last-child{border-bottom:none;}
+.fq{font-size:14px;font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:14px;}
+.fq .ic{color:var(--text3);font-size:18px;transition:transform .2s;flex-shrink:0;}
+.fi.open .fq .ic{transform:rotate(45deg);}
+.fa{font-size:13px;color:var(--text2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;}
+.fi.open .fa{max-height:200px;padding-top:10px;}
+.cta{text-align:center;padding:80px 40px;background:var(--accent);color:#fff;}
+.cta h2{font-size:clamp(22px,3.5vw,38px);font-weight:600;letter-spacing:-.03em;margin-bottom:12px;}
+.cta p{font-size:15px;opacity:.7;margin-bottom:28px;}
+.cta .btn-p{background:#fff;color:var(--accent);display:inline-flex;}
+.cta .btn-p:hover{background:#f0f4ff;}
+footer{padding:40px;border-top:1px solid var(--border);background:var(--bg2);}
+.footer-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;}
+.footer-brand p{font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:14px;font-family:'DM Mono',monospace;}
+.footer-col a{display:block;font-size:13px;color:var(--text2);text-decoration:none;margin-bottom:8px;transition:color .2s;}
+.footer-col a:hover{color:var(--text);}
+.footer-bottom{max-width:1060px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;flex-wrap:wrap;gap:8px;}
+@media(max-width:768px){
+  nav{padding:14px 20px;}.nav-r a:not(.nav-cta){display:none;}
+  .hero{grid-template-columns:1fr;padding:100px 20px 50px;gap:32px;}.doc-preview{display:none;}
+  .type-cards{grid-template-columns:1fr 1fr;}
+  .section,.tool-wrap{padding:50px 20px;}.showcase,.demo-section{padding:40px 20px;}.demo-inner{padding:0;}
+  .features,.doc-type-grid,.form-grid{grid-template-columns:1fr;}
+  .field.full{grid-column:span 1;}
+  .pg{grid-template-columns:1fr;}
+  .steps-nav .step-tab{font-size:11px;padding:10px 6px;}
+  .output-doc{padding:20px;}
+  footer{padding:30px 20px;}.footer-inner{grid-template-columns:1fr;gap:20px;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="#" class="logo">Resmi<span>Yaz</span></a>
+  <div class="nav-r">
+    <a href="#nasil">Nasıl çalışır</a>
+    <a href="#demo">Örnek</a>
+    <a href="#fiyat">Fiyat</a>
+    <a href="#tool" class="nav-cta">Ücretsiz dene →</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div>
+    <div class="hero-tag"><span class="dot"></span>Avukata gitmeden önce 60 saniye ver</div>
+    <h1>Haklarını biliyorsun.<br><em>Şimdi yaz.</em></h1>
+    <p class="hero-sub">Resmi dili biz biliyoruz. Sen sadece durumunu anlat — kanun maddeli, imzaya hazır belgen 60 saniyede çıksın.</p>
+    <div class="hero-actions">
+      <a href="#tool" class="btn-p">Ücretsiz dene →</a>
+      <a href="#demo" class="btn-s">Örnek gör</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">ücretsiz yazı</div></div>
+      <div class="stat"><div class="stat-num">&lt;60s</div><div class="stat-label">hazırlanma süresi</div></div>
+      <div class="stat"><div class="stat-num">8</div><div class="stat-label">yazı tipi</div></div>
+    </div>
+  </div>
+  <div class="doc-preview">
+    <div class="doc-stamp">AI ile üretildi</div>
+    <div class="doc-hdr"><div class="doc-hdr-title">Dilekçe</div><div class="doc-hdr-sub">T.C. İstanbul Büyükşehir Belediyesi'ne</div></div>
+    <div class="doc-line"></div><div class="doc-line m"></div><div class="doc-line"></div><div class="doc-line s"></div><div class="doc-line m"></div><div class="doc-line"></div><div class="doc-line xs"></div>
+    <div class="doc-sig"><span>15.03.2025</span><span>İmza: ___________</span></div>
+    <div class="doc-ai">✦ Resmi dil ve formatla otomatik oluşturuldu</div>
+  </div>
+</div>
+
+<div class="showcase">
+  <div class="showcase-inner">
+    <h2>Hangi yazıya ihtiyacın var?</h2>
+    <div class="type-cards">
+      <div class="type-card" onclick="scrollToTool('dilekce')"><div class="tc-icon">📋</div><div class="tc-name">Dilekçe</div><div class="tc-desc">Belediye, devlet kurumu, okul</div></div>
+      <div class="type-card" onclick="scrollToTool('ihtar')"><div class="tc-icon">⚖️</div><div class="tc-name">İhtar</div><div class="tc-desc">Kiracı, alacak, sözleşme ihlali</div></div>
+      <div class="type-card" onclick="scrollToTool('itiraz')"><div class="tc-icon">🔄</div><div class="tc-name">İtiraz</div><div class="tc-desc">Ceza, karar, idari itiraz</div></div>
+      <div class="type-card" onclick="scrollToTool('sikayet')"><div class="tc-icon">📢</div><div class="tc-name">Şikayet</div><div class="tc-desc">Ürün, hizmet, komşu şikayeti</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="ti">🔒</span><span><strong>Sıfır Veri Saklama</strong> — Bilgileriniz hiçbir sunucuda saklanmaz</span></div>
+    <div class="trust-item"><span class="ti">⚖️</span><span><strong>Yasal Dayanaklı</strong> — 3071 sayılı Kanun ve Resmi Yazışma Yönetmeliği'ne uygun</span></div>
+    <div class="trust-item"><span class="ti">🚫</span><span><strong>Reklam & Veri Satışı Yok</strong> — Gelir modelimiz sadece kullanıcı ödemesi</span></div>
+  </div>
+</div>
+
+<div class="section" id="nasil">
+  <span class="slabel">Neden YazıÜret</span>
+  <h2 class="stitle">Herkes resmi yazı yazamaz.<br>Artık herkes yazabilir.</h2>
+  <p class="ssub">Resmi dili bilmek gerekmez. Sen durumu anlat, biz yazıyı üretelim.</p>
+  <div class="features">
+    <div class="feat"><div class="feat-icon">📝</div><h3>Doğru resmi dil</h3><p>Kurumların beklediği resmi Türkçe, doğru hitap biçimleri ve format.</p></div>
+    <div class="feat"><div class="feat-icon">⚡</div><h3>60 saniyede hazır</h3><p>Durumu anlat, butona bas. Yazın anında hazır, kopyala gönder.</p></div>
+    <div class="feat"><div class="feat-icon">🎯</div><h3>Durumuna özel</h3><p>Şablon değil. Senin durumuna ve muhatabına özel yazı.</p></div>
+  </div>
+</div>
+
+<div class="demo-section" id="demo">
+  <div class="demo-inner">
+    <span class="slabel" style="display:block;text-align:center;">Örnek çıktı</span>
+    <h2 class="stitle" style="text-align:center;">İşte gerçekte nasıl görünüyor</h2>
+    <p class="ssub" style="margin:0 auto;text-align:center;">Sokak lambası arızası için örnek dilekçe</p>
+    <div class="demo-doc"><strong style="float:right;">İstanbul, 15.03.2025</strong><br><br><strong>T.C.<br>İstanbul Büyükşehir Belediyesi<br>Ulaşım ve Altyapı Hizmetleri Daire Başkanlığı'na</strong><div class="demo-divider"></div><strong>KONU:</strong> Sokak Lambası Arızasının Giderilmesi Talebi Hakkında<div class="demo-divider"></div>Sayın Yetkili,<br><br>Kadıköy ilçesi, Moda Caddesi No:42 önünde bulunan sokak lambasının yaklaşık iki (2) aydır arızalı olduğunu saygıyla bildiririm.<br><br>Söz konusu arıza nedeniyle gece saatlerinde yeterli aydınlatma sağlanamamakta; bu durum başta yaşlılar ve çocuklar olmak üzere tüm yayalar için ciddi güvenlik riski oluşturmaktadır.<br><br>Bu itibarla, adı geçen sokak lambasının ivedilikle onarılarak hizmete alınması hususunda gereğinin yapılmasını saygılarımla arz ederim.<br><br><strong>Ahmet Yılmaz</strong><br>Tel: 0532 xxx xx xx<br>Adres: Moda Cad. No:42, Kadıköy/İstanbul<div class="demo-divider"></div><span style="float:right;">İmza: ___________________</span></div>
+  </div>
+</div>
+
+<div id="tool">
+  <div class="tool-wrap">
+    <div class="tool-hdr">
+      <span class="slabel">Yazı Oluşturucu</span>
+      <h2 class="stitle">Hemen başla</h2>
+    </div>
+    <div class="credits-bar">
+      <span class="credits-l">Kalan ücretsiz hakkın: <strong id="credit-display">3</strong> / 3</span>
+      <a href="#fiyat" class="credits-u">Daha fazla al →</a>
+    </div>
+    <div class="steps-nav">
+      <div class="step-tab active" data-step="1"><span class="sn">1</span>Yazı tipi</div>
+      <div class="step-tab" data-step="2"><span class="sn">2</span>Bilgiler</div>
+      <div class="step-tab" data-step="3"><span class="sn">3</span>Sonuç</div>
+    </div>
+
+    <div class="form-step active" id="step-1">
+      <div class="doc-type-grid">
+        <div class="dtype selected" data-type="dilekce"><div class="dtype-icon">📋</div><div><h4>Dilekçe</h4><p>Resmi kurumlara talep veya başvuru</p></div></div>
+        <div class="dtype" data-type="ihtar"><div class="dtype-icon">⚖️</div><div><h4>İhtar / İhtarname</h4><p>Resmi uyarı ve hukuki bildirim</p></div></div>
+        <div class="dtype" data-type="itiraz"><div class="dtype-icon">🔄</div><div><h4>İtiraz</h4><p>Karar veya cezaya itiraz</p></div></div>
+        <div class="dtype" data-type="sikayet"><div class="dtype-icon">📢</div><div><h4>Şikayet Mektubu</h4><p>Ürün, hizmet veya kişi şikayeti</p></div></div>
+        <div class="dtype" data-type="is_basvuru"><div class="dtype-icon">💼</div><div><h4>İş Başvuru Mektubu</h4><p>Resmi iş başvurusu</p></div></div>
+        <div class="dtype" data-type="kira_ihtar"><div class="dtype-icon">🏠</div><div><h4>Kira İhtarı</h4><p>Kiracı veya ev sahibine ihtar</p></div></div>
+        <div class="dtype" data-type="vekaletname"><div class="dtype-icon">📜</div><div><h4>Vekâletname Talebi</h4><p>Noter vekâleti için talep yazısı</p></div></div>
+        <div class="dtype" data-type="diger"><div class="dtype-icon">✏️</div><div><h4>Diğer Resmi Yazı</h4><p>Başka bir resmi yazı türü</p></div></div>
+      </div>
+      <div class="form-nav"><div></div><button class="btn-p" onclick="goStep(2)">Devam →</button></div>
+    </div>
+
+    <div class="form-step" id="step-2">
+      <div class="form-grid">
+        <div class="field"><label>Adın Soyadın <span class="req">*</span></label><input type="text" id="ad" placeholder="Ahmet Yılmaz"><span class="field-err" id="err-ad">Bu alan zorunlu.</span></div>
+        <div class="field"><label>Kurum / Kişi <span class="req">*</span></label><input type="text" id="muhatap" placeholder="Örn: Ankara Üniversitesi Rektörlüğü"><span class="field-hint">Başlıkta büyük harfle çıkacak.</span><span class="field-err" id="err-muhatap">Bu alan zorunlu.</span></div>
+        <div class="field full"><label>Konu Özeti <span class="req">*</span></label><input type="text" id="konu_ozet" placeholder="Örn: 2025-2026 Bahar dönemi ders notu itirazı hakkında"><span class="field-hint">"KONU:" satırına gelecek — kısa ve net yaz.</span><span class="field-err" id="err-konu_ozet">Bu alan zorunlu.</span></div>
+        <div class="field full"><label>Detay / Talep <span class="req">*</span></label><textarea id="konu" placeholder="Örn: 2025-2026 Bahar döneminde aldığım Matematik dersinden 44 puan aldım. Sınav kağıdımın yeniden değerlendirilmesini talep ediyorum."></textarea><span class="field-hint">Ne kadar çok detay verirsen yazı o kadar iyi çıkar.</span><span class="field-err" id="err-konu">Bu alan zorunlu.</span></div>
+        <div class="field"><label>Tarih</label><input type="text" id="tarih" placeholder="15.03.2025"></div>
+        <div class="field"><label>Şehir</label><input type="text" id="sehir" placeholder="İstanbul"></div>
+        <div class="field"><label>Ton</label><select id="ton"><option value="resmi">Resmi & Saygılı</option><option value="sert">Sert & Kararlı</option><option value="nazik">Nazik & Ricacı</option></select></div>
+        <div class="field"><label>İletişim (opsiyonel)</label><input type="text" id="iletisim" placeholder="05xx xxx xx xx"></div>
+      </div>
+      <div class="form-nav"><button class="btn-back" onclick="goStep(1)">← Geri</button><button class="btn-gen" onclick="generate()">✦ Yazıyı Oluştur</button></div>
+    </div>
+
+    <div class="form-step" id="step-3">
+      <div class="loading" id="loading"><div class="loading-spinner"></div><p>Yazın hazırlanıyor...</p><div id="loading-steps"></div></div>
+      <div class="error-box" id="error-box"></div>
+      <div id="output-section">
+        <div class="output-toolbar"><span class="output-title" id="output-title">Dilekçe</span><span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">yapay zeka ile üretildi</span></div>
+        <div class="output-doc" id="output-doc"></div>
+        <p class="print-hint">// Kopyala → Word / Google Docs'a yapıştır → imzala → gönder</p>
+        <div class="output-actions">
+          <button class="btn-copy" id="copy-btn" onclick="copyOutput()">Kopyala</button>
+          <button class="btn-pdf" onclick="downloadPDF()">PDF İndir</button>
+          <button class="btn-new" onclick="resetForm()">Yeni yazı</button>
+        </div>
+      </div>
+      <div id="step3-back" style="display:none;margin-top:14px;"><button class="btn-back" onclick="goStep(2)">← Düzenle</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="fiyat">
+  <span class="slabel">Fiyatlandırma</span>
+  <h2 class="stitle">Basit ve şeffaf</h2>
+  <p class="ssub">Ücretsiz dene. Beğenirsen devam et.</p>
+  <div class="pg">
+    <div class="plan">
+      <div class="pname">Ücretsiz</div><div class="pprice">₺0</div><div class="pdesc">sonsuza kadar ücretsiz</div>
+      <ul class="pfeats"><li>3 yazı toplamda</li><li>Tüm yazı tipleri</li><li>PDF indirme</li></ul>
+      <a href="#tool" class="pbtn">Hemen başla</a>
+    </div>
+    <div class="plan f">
+      <div class="pbadge">POPÜLER</div>
+      <div class="pname">Pro</div><div class="pprice">₺29 <span>/ 10 yazı</span></div><div class="pdesc">tek seferlik · abonelik yok</div>
+      <ul class="pfeats"><li>10 yazı</li><li>Tüm yazı tipleri</li><li>PDF indirme</li><li>Öncelikli destek</li></ul>
+      <a href="#tool" class="pbtn">Satın al</a>
+    </div>
+  </div>
+  <div class="faq">
+    <div class="fi"><div class="fq">Yasal olarak geçerli mi? <span class="ic">+</span></div><div class="fa">Üretilen yazılar resmi Türkçe yazışma kurallarına uygun hazırlanır. Rutin dilekçe, ihtar ve şikayetler için yeterlidir. Ciddi hukuki süreçler için avukata danışın.</div></div>
+    <div class="fi"><div class="fq">Bilgilerim saklanıyor mu? <span class="ic">+</span></div><div class="fa">Hayır. Hiçbir bilginiz sunucularımızda saklanmaz. Sayfayı kapattığında her şey silinir.</div></div>
+    <div class="fi"><div class="fq">ChatGPT ile fark ne? <span class="ic">+</span></div><div class="fa">ChatGPT'ye doğru prompt yazmayı bilmen lazım. YazıÜret resmi Türk yazışma kurallarını, hitap biçimlerini ve belge formatını zaten biliyor. Sen sadece durumu anlat.</div></div>
+    <div class="fi"><div class="fq">Hangi yazı tipleri var? <span class="ic">+</span></div><div class="fa">Dilekçe, ihtar/ihtarname, itiraz, şikayet mektubu, iş başvuru mektubu, kira ihtarı, vekâletname talebi ve genel resmi yazı — toplamda 8 tür.</div></div>
+    <div class="fi"><div class="fq">Ödeme nasıl yapılır? <span class="ic">+</span></div><div class="fa">Kredi kartı veya banka kartı ile güvenli ödeme. Tek seferlik, abonelik yok.</div></div>
+  </div>
+</div>
+
+<div class="cta"><h2>İlk yazın ücretsiz.</h2><p>Kayıt yok. Kredi kartı yok. 60 saniye.</p><a href="#tool" class="btn-p">Şimdi dene →</a></div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="#" class="logo">Resmi<span>Yaz</span></a><p>Resmi yazıları herkesin kolayca yazabilmesi için yapıldı.</p></div>
+    <div class="footer-col"><h4>Yazı Tipleri</h4><a href="#tool">Dilekçe</a><a href="#tool">İhtar / İhtarname</a><a href="#tool">İtiraz</a><a href="#tool">Şikayet Mektubu</a><a href="#tool">Kira İhtarı</a></div>
+    <div class="footer-col"><h4>Bilgi</h4><a href="#nasil">Nasıl çalışır</a><a href="#demo">Örnek çıktı</a><a href="#fiyat">Fiyatlandırma</a><a href="#fiyat">Sık Sorulan Sorular</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 ResmiYaz</span><span>Yapay zeka ile üretilen yazılar hukuki tavsiye niteliği taşımaz.</span></div>
+</footer>
+
+<script>
+let currentStep=1,selectedType='dilekce',lastOutput='';
+let credits=parseInt(localStorage.getItem('yaziuret_credits')?? '3');
+document.getElementById('credit-display').textContent=credits;
+document.getElementById('tarih').value=new Date().toLocaleDateString('tr-TR');
+
+document.querySelectorAll('.dtype').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    document.querySelectorAll('.dtype').forEach(o=>o.classList.remove('selected'));
+    opt.classList.add('selected');selectedType=opt.dataset.type;
+  });
+});
+
+function scrollToTool(type){
+  selectedType=type;
+  document.querySelectorAll('.dtype').forEach(o=>o.classList.toggle('selected',o.dataset.type===type));
+  document.getElementById('tool').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function goStep(n){
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.querySelectorAll('.step-tab').forEach((tab,i)=>{
+    tab.classList.remove('active','done');
+    if(i+1<n)tab.classList.add('done');
+  });
+  currentStep=n;
+  document.getElementById(`step-${n}`).classList.add('active');
+  document.querySelector(`.step-tab[data-step="${n}"]`).classList.add('active');
+  document.getElementById('tool').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function validate(){
+  let ok=true;
+  ['ad','muhatap','konu_ozet','konu'].forEach(id=>{
+    const el=document.getElementById(id),err=document.getElementById(`err-${id}`);
+    if(!el.value.trim()){el.classList.add('err');if(err)err.style.display='block';ok=false;}
+    else{el.classList.remove('err');if(err)err.style.display='none';}
+  });
+  return ok;
+}
+['ad','muhatap','konu_ozet','konu'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',()=>{el.classList.remove('err');const err=document.getElementById(`err-${id}`);if(err)err.style.display='none';});
+});
+
+document.querySelectorAll('.fi').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const was=item.classList.contains('open');
+    document.querySelectorAll('.fi').forEach(i=>i.classList.remove('open'));
+    if(!was)item.classList.add('open');
+  });
+});
+
+const typeLabels={dilekce:'Dilekçe',ihtar:'İhtarname',itiraz:'İtiraz Dilekçesi',sikayet:'Şikayet Mektubu',is_basvuru:'İş Başvuru Mektubu',kira_ihtar:'Kira İhtarnamesi',vekaletname:'Vekâletname Talebi',diger:'Resmi Yazı'};
+const tonLabels={resmi:'resmi ve saygılı',sert:'sert ve kararlı',nazik:'nazik ve ricacı'};
+
+function buildPrompt(){
+  const v=id=>document.getElementById(id)?.value||'';
+  const tonMap={resmi:'resmi ve saygılı',sert:'sert ve kararlı',nazik:'nazik ve ricacı'};
+  return `GÖREV: Sen, Türkiye'deki "Resmi Yazışma Usul ve Esasları Yönetmeliği"ne, 3071 sayılı Dilekçe Hakkı Kanunu'na ve Türk hukuk sistemine tam hakim, profesyonel bir "Yazışma Uzmanı ve Belge Mimarı"sın.
+STRATEJİ: Kullanıcının girdiği ham verileri; hiçbir "Tabii yardımcı olurum", "İşte dilekçeniz" gibi gereksiz giriş cümlesi kurmadan, doğrudan A4 PDF'e basılmaya hazır, hatasız bir evrak metni olarak üretmelisin.
+YAZIM VE FORMAT KURALLARI:
+1. BAŞLIK: Kurum adını tam, BÜYÜK HARFLERLE, kalın vurgusuyla ve ortalanmış şekilde yaz. Alt birim varsa alt satıra geç.
+2. HİYERARŞİ:
+   - Üst makama yazılıyorsa: "Arz ederim." ile bitir.
+   - Eş/Alt makama yazılıyorsa: "Rica ederim." ile bitir.
+   - Şahıs/Şirketlere: "Bilgilerinize sunulur." kullan.
+3. HUKUKİ DERİNLİK: Metin içine konuya uygun kanun maddelerini (6502 s. Tüketici Kanunu, 4857 s. İş Kanunu, 2547 s. Yükseköğretim Kanunu vb.) doğal bir akışla, profesyonel bir üslupla yerleştir.
+4. DÜZEN:
+   - Sağ üstte güncel tarih: ${v('tarih')||new Date().toLocaleDateString('tr-TR')}
+   - Sol üstte "KONU: [Özet]" başlığı.
+   - Sağ altta isim-soyisim ve imza alanı.
+   - Sol altta T.C. No, Adres, Telefon bilgileri için boşluklar.
+5. TON: ${tonMap[v('ton')]} — resmiyetten asla ödün verme.
+EKSTRA KATMA DEĞER (BELGE SONUNA EKLE):
+Metin bittikten sonra "---" ayırıcı çizgi çek ve şu iki bölümü mutlaka ekle:
+- [GEREKLİ EKLER]: Dilekçeye eklenecek belgeleri maddeler halinde listele.
+- [GÖNDERİM REHBERİ]: Belgenin fiziksel/dijital teslim yöntemi hakkında kısa, yol gösterici tavsiye yaz.
+KESİN KURAL: Çıktın, doğrudan kağıda basılacak saf, resmi evrak metni olmalıdır. İçerik dışında tek bir kelime bile yazma.
+KULLANICI VERİLERİ:
+- Belge Türü: ${typeLabels[selectedType]}
+- Yazan: ${v('ad')}
+- Muhatap (Başlık): ${v('muhatap')}
+- Konu Özeti (KONU: satırı): ${v('konu_ozet')}
+- Detay / Talep: ${v('konu')}
+- Şehir: ${v('sehir')}
+- İletişim: ${v('iletisim')}`;
+}
+
+async function generate(){
+  if(!validate())return;
+  if(credits<=0){
+    goStep(3);
+    const err=document.getElementById('error-box');
+    err.style.display='block';
+    err.innerHTML='Ücretsiz hakkın bitti. <a href="#fiyat" style="color:var(--red);font-weight:500;">Pro planı almak için tıkla →</a>';
+    return;
+  }
+  goStep(3);
+  const loading=document.getElementById('loading'),outputSection=document.getElementById('output-section'),errorBox=document.getElementById('error-box'),step3back=document.getElementById('step3-back');
+  loading.style.display='block';outputSection.style.display='none';errorBox.style.display='none';step3back.style.display='none';
+  const ls=document.createElement('div');ls.className='lstep';ls.textContent=`${typeLabels[selectedType]} hazırlanıyor...`;
+  document.getElementById('loading-steps').innerHTML='';document.getElementById('loading-steps').appendChild(ls);
+  try{
+    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt()})});
+    if(!res.ok){
+      const data=await res.json().catch(()=>({}));const msg=data.error||'';
+      if(res.status===401||msg.includes('auth'))throw new Error('API key geçersiz. Vercel ayarlarında ANTHROPIC_KEY\'i kontrol et.');
+      if(res.status===429)throw new Error('Çok fazla istek gönderildi. Birkaç saniye bekle.');
+      if(res.status===500)throw new Error('Sunucu hatası. API key\'in doğru girildiğinden emin ol.');
+      throw new Error(msg||`Bağlantı hatası (${res.status})`);
+    }
+    const data=await res.json();lastOutput=data.result;
+    credits--;localStorage.setItem('yaziuret_credits',credits);document.getElementById('credit-display').textContent=credits;
+    loading.style.display='none';outputSection.style.display='block';step3back.style.display='block';
+    document.getElementById('output-doc').textContent=lastOutput;
+    document.getElementById('output-title').textContent=typeLabels[selectedType];
+    if(credits===0){const notice=document.createElement('div');notice.className='notice-box';notice.innerHTML='Son ücretsiz hakkını kullandın. Devam etmek için <a href="#fiyat" style="color:var(--amber);font-weight:500;">Pro planı al →</a>';outputSection.insertBefore(notice,outputSection.firstChild);}
+  }catch(err){
+    loading.style.display='none';errorBox.style.display='block';errorBox.textContent=err.message;step3back.style.display='block';
+  }
+}
+
+function copyOutput(){
+  navigator.clipboard.writeText(lastOutput).then(()=>{
+    const btn=document.getElementById('copy-btn');btn.textContent='✓ Kopyalandı';setTimeout(()=>btn.textContent='Kopyala',2000);
+  });
+}
+
+function downloadPDF(){
+  if(!lastOutput)return;
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'mm',format:'a4'});
+    doc.setFont('times','normal');
+    doc.setFontSize(12);
+    const lines=doc.splitTextToSize(lastOutput,150);
+    let y=30;
+    lines.forEach(line=>{
+      if(y>270){doc.addPage();y=25;}
+      doc.text(line,30,y);
+      y+=7;
+    });
+    doc.save(`resmi-yazi-${new Date().getTime()}.pdf`);
+  }catch(e){
+    alert('PDF hatası!');
+  }
+}
+
+function resetForm(){
+  document.querySelectorAll('input,textarea').forEach(el=>{if(el.id!=='tarih')el.value='';});
+  const ko=document.getElementById('konu_ozet');if(ko)ko.value='';
+  document.getElementById('tarih').value=new Date().toLocaleDateString('tr-TR');
+  document.querySelectorAll('.dtype').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('[data-type="dilekce"]').classList.add('selected');
+  selectedType='dilekce';lastOutput='';
+  document.getElementById('loading-steps').innerHTML='';
+  document.getElementById('output-section').style.display='none';
+  document.getElementById('error-box').style.display='none';
+  goStep(1);
+}
+</script>
+</body>
+</html>
