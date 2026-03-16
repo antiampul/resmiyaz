@@ -173,6 +173,13 @@ footer{padding:40px;border-top:1px solid var(--border);background:var(--bg2);}
 
 <style id="print-styles">
 @media print {
+  @page {
+    margin: 30mm 30mm 25mm 30mm;
+    size: A4;
+  }
+  /* Tarayıcı header/footer'ını kaldır */
+  @page { margin-top: 30mm; }
+  
   body > *:not(#print-area) { display: none !important; }
   #print-area {
     display: block !important;
@@ -181,15 +188,19 @@ footer{padding:40px;border-top:1px solid var(--border);background:var(--bg2);}
     background: white;
     z-index: 99999;
     padding: 30mm 30mm 25mm 30mm;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 12pt;
     line-height: 1.8;
     color: #000;
+    -webkit-print-color-adjust: exact;
   }
   #print-area .print-content {
     white-space: pre-wrap;
     word-wrap: break-word;
+    font-family: Arial, Helvetica, sans-serif;
   }
+  /* Header ve footer'ı gizle */
+  #print-area::before, #print-area::after { display: none !important; }
 }
 </style>
 <div id="print-area" style="display:none;">
