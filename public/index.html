@@ -6,6 +6,7 @@
 <title>ResmiYaz — Resmi Dilekçe, İhtar & Yazı Üreticisi</title>
 <meta name="description" content="Avukata gitmeden önce 60 saniye ver. Resmi dilekçe, ihtar, itiraz ve şikayet mektubu — yasal dayanaklı, 60 saniyede hazır.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root{--bg:#fafaf8;--bg2:#fff;--bg3:#f3f2ee;--border:#e4e3dc;--border2:#d0cfc6;--text:#181816;--text2:#68685e;--text3:#a8a89e;--accent:#1a4a8a;--accent2:#143a6e;--al:#e8f0fa;--al2:#d0e2f5;--red:#c0392b;--green:#1a6a3a;--amber:#92600a;}
@@ -169,6 +170,32 @@ footer{padding:40px;border-top:1px solid var(--border);background:var(--bg2);}
   .footer-bottom{flex-direction:column;text-align:center;}
 }
 </style>
+
+<style id="print-styles">
+@media print {
+  body > *:not(#print-area) { display: none !important; }
+  #print-area {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 99999;
+    padding: 30mm 30mm 25mm 30mm;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #000;
+  }
+  #print-area .print-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+</style>
+<div id="print-area" style="display:none;">
+  <div class="print-content" id="print-content"></div>
+</div>
+
 </head>
 <body>
 <nav>
@@ -299,7 +326,7 @@ footer{padding:40px;border-top:1px solid var(--border);background:var(--bg2);}
         <p class="print-hint">// Kopyala → Word / Google Docs'a yapıştır → imzala → gönder</p>
         <div class="output-actions">
           <button class="btn-copy" id="copy-btn" onclick="copyOutput()">Kopyala</button>
-          <button class="btn-pdf" onclick="downloadPDF()">PDF İndir</button>
+          <button class="btn-pdf" onclick="downloadPDF()">🖨 Yazdır / PDF Kaydet</button>
           <button class="btn-new" onclick="resetForm()">Yeni yazı</button>
         </div>
       </div>
@@ -476,22 +503,15 @@ function copyOutput(){
 
 function downloadPDF(){
   if(!lastOutput)return;
-  try{
-    const {jsPDF}=window.jspdf;
-    const doc=new jsPDF({unit:'mm',format:'a4'});
-    doc.setFont('times','normal');
-    doc.setFontSize(12);
-    const lines=doc.splitTextToSize(lastOutput,150);
-    let y=30;
-    lines.forEach(line=>{
-      if(y>270){doc.addPage();y=25;}
-      doc.text(line,30,y);
-      y+=7;
-    });
-    doc.save(`resmi-yazi-${new Date().getTime()}.pdf`);
-  }catch(e){
-    alert('PDF hatası!');
-  }
+  // Print area'ya metni koy
+  const printContent = document.getElementById('print-content');
+  const printArea = document.getElementById('print-area');
+  printContent.textContent = lastOutput;
+  printArea.style.display = 'block';
+  // Yazdır
+  window.print();
+  // Yazdırma bitti, gizle
+  setTimeout(()=>{ printArea.style.display = 'none'; }, 1000);
 }
 
 function resetForm(){
