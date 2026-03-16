@@ -463,7 +463,9 @@ KULLANICI VERİLERİ:
 
 async function generate(){
   if(!validate())return;
-  if(credits<=0){
+  // Geliştirici modu: tarayıcı konsolunda localStorage.setItem('dev','1') yaz
+  const devMode = localStorage.getItem('dev') === '1';
+  if(credits<=0 && !devMode){
     goStep(3);
     const err=document.getElementById('error-box');
     err.style.display='block';
@@ -485,7 +487,7 @@ async function generate(){
       throw new Error(msg||`Bağlantı hatası (${res.status})`);
     }
     const data=await res.json();lastOutput=data.result;
-    credits--;localStorage.setItem('yaziuret_credits',credits);document.getElementById('credit-display').textContent=credits;
+    if(!devMode){credits--;localStorage.setItem('yaziuret_credits',credits);document.getElementById('credit-display').textContent=credits;}
     loading.style.display='none';outputSection.style.display='block';step3back.style.display='block';
     document.getElementById('output-doc').textContent=lastOutput;
     document.getElementById('output-title').textContent=typeLabels[selectedType];
