@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İletişim — ResmiYaz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{--bg:#fafaf8;--bg2:#fff;--border:#e4e3dc;--text:#181816;--text2:#68685e;--accent:#1a4a8a;--al:#e8f0fa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+nav{padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--border);}
+.logo{font-size:18px;font-weight:600;letter-spacing:-.03em;color:var(--text);text-decoration:none;}
+.logo span{color:var(--accent);}
+main{max-width:560px;margin:0 auto;padding:60px 40px 100px;}
+h1{font-size:32px;font-weight:600;letter-spacing:-.03em;margin-bottom:8px;}
+.sub{font-size:15px;color:var(--text2);margin-bottom:40px;line-height:1.7;}
+.contact-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px;}
+.contact-card h3{font-size:14px;font-weight:500;margin-bottom:8px;}
+.contact-card a{font-size:15px;color:var(--accent);text-decoration:none;}
+.contact-card p{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.6;}
+.notice{background:var(--al);border:1px solid #c0d4f0;border-radius:10px;padding:16px 20px;font-size:13px;color:var(--accent);line-height:1.7;}
+@media(max-width:600px){nav,main{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Resmi<span>Yaz</span></a>
+</nav>
+<main>
+  <h1>İletişim</h1>
+  <p class="sub">Sorularınız, önerileriniz veya teknik sorunlar için aşağıdan ulaşabilirsiniz.</p>
+
+  <div class="contact-card">
+    <h3>E-posta</h3>
+    <a href="mailto:cdestan1413@gmail.com">cdestan1413@gmail.com</a>
+    <p>Genellikle 24-48 saat içinde yanıt verilir.</p>
+  </div>
+
+  <div class="contact-card">
+    <h3>Teknik Destek</h3>
+    <a href="mailto:cdestan1413@gmail.com">cdestan1413@gmail.com</a>
+    <p>Belge üretiminde sorun yaşıyorsanız veya ödemenizle ilgili bir sorun varsa yazın.</p>
+  </div>
+
+  <div class="notice">
+    ⚖️ ResmiYaz yapay zeka destekli bir araçtır. Hukuki danışmanlık hizmeti vermemektedir. Ciddi hukuki süreçler için bir avukattan destek almanızı öneririz.
+  </div>
+</main>
+</body>
+</html>
