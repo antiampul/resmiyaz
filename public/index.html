@@ -516,15 +516,44 @@ function copyOutput(){
 
 function downloadPDF(){
   if(!lastOutput)return;
-  // Print area'ya metni koy
-  const printContent = document.getElementById('print-content');
-  const printArea = document.getElementById('print-area');
-  printContent.textContent = lastOutput;
-  printArea.style.display = 'block';
-  // Yazdır
-  window.print();
-  // Yazdırma bitti, gizle
-  setTimeout(()=>{ printArea.style.display = 'none'; }, 1000);
+  // Yeni temiz pencere aç - tarayıcı header/footer'ı olmaz
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>ResmiYaz — Belge</title>
+<style>
+  @page { margin: 30mm 30mm 25mm 30mm; size: A4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #000;
+    background: #fff;
+    padding: 0;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    line-height: 1.8;
+  }
+  @media print {
+    @page { margin: 30mm 30mm 25mm 30mm; }
+  }
+</style>
+</head>
+<body>
+<pre>${lastOutput.replace(/`/g, '\`')}</pre>
+<script>
+  window.onload = function(){ window.print(); }
+<\/script>
+</body>
+</html>`);
+  win.document.close();
 }
 
 function resetForm(){
